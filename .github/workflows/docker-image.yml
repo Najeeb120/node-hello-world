@@ -28,17 +28,16 @@ jobs:
       - name: Run tests
         run: npm test
 
-      # Run SonarQube analysis using the GitHub Action
-      - name: SonarQube Analysis
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-          projectBaseDir: .
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+  uses: SonarSource/sonarcloud-github-action@v2
+  with:
+    projectBaseDir: .
+    args: >
+      -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+      -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+  env:
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
       # Set up Docker Buildx for building images
       - name: Set up Docker Buildx
