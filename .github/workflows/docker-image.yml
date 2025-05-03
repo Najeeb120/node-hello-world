@@ -1,10 +1,3 @@
-name: Build and Deploy
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -28,11 +21,11 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         with:
           projectBaseDir: .
+          sonar.projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Specify the project key here
+          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}  # Specify the organization here
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
