@@ -14,3 +14,12 @@
   "keywords": [],
   "author": ""
 }
+{
+  "name": "node-hello-world",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  }
+}
+
