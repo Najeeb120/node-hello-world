@@ -28,16 +28,16 @@ jobs:
       - name: Run tests
         run: npm test
 
-      # SonarQube scan
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          projectBaseDir: .
-          sonar.projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # SonarQube project key stored in GitHub Secrets
-          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}  # SonarQube organization stored in GitHub Secrets
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # SonarQube token stored in GitHub Secrets
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # SonarQube server URL stored in GitHub Secrets
+
+      # Run the sonar-scanner with the required properties
+      - name: SonarQube Analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.projectBaseDir=.
 
       # Set up Docker Buildx for building images
       - name: Set up Docker Buildx
