@@ -1,42 +1,49 @@
-name: Build and Deploy
+name: Build and Deploy Pipeline
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger the pipeline on push to the 'main' branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
+      # Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Run tests
       - name: Run tests
         run: npm test
 
+      # SonarQube scan
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
           projectBaseDir: .
-          sonar.projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Specify the project key here
-          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}  # Specify the organization here
+          sonar.projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # SonarQube project key stored in GitHub Secrets
+          sonar.organization: ${{ secrets.SONAR_ORGANIZATION }}  # SonarQube organization stored in GitHub Secrets
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # SonarQube token stored in GitHub Secrets
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # SonarQube server URL stored in GitHub Secrets
 
+      # Set up Docker Buildx for building images
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Build Docker image
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
@@ -44,6 +51,7 @@ jobs:
           push: false
           tags: node-sample-demo:v2
 
+      # Trivy scan for vulnerabilities in the Docker image
       - name: Trivy scan image for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
@@ -51,9 +59,19 @@ jobs:
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
-        continue-on-error: true  # optionally skip failing pipeline on scan failure
+        continue-on-error: true  # Optionally skip failing pipeline on scan failure
 
+      # Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub username stored in GitHub Secrets
+          password: ${{ secrets.DOCKER_PASS }}  # Docker Hub password stored in GitHub Secrets
+
+      # Push Docker image to Docker Hub
+      - name: Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/node-sample-demo:v2
