@@ -11,7 +11,7 @@ jobs:
     env:
       IMAGE_NAME: 8898039/microservice-demo
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASS }}
 
     steps:
       - name: Checkout code
