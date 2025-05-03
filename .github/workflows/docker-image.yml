@@ -27,4 +27,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/microservice-demo:v1
+          tags: ${{ secrets.DOCKER_USERNAME }}/node-sample-demo:v1
