@@ -32,10 +32,12 @@ jobs:
       - name: Run SonarQube analysis
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
-          sonar-organization: ${{ secrets.SONAR_ORGANIZATION }}
-          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-          sonar-login: ${{ secrets.SONAR_TOKEN }}
+          args: |
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} 
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} 
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} 
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} 
+          projectBaseDir: .
 
       # Set up Docker Buildx for building images
       - name: Set up Docker Buildx
